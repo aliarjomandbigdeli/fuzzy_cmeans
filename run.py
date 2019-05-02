@@ -1,3 +1,5 @@
+from sklearn.datasets.samples_generator import make_blobs
+import matplotlib.pyplot as plt
 import random
 
 """
@@ -31,21 +33,24 @@ class FCM:
             if self.check_convergence() < self._error:
                 break
 
-    def create_random_data(self, num_of_data, dimenstion, cluster_number):
-        self._dimension = dimenstion
+    def create_random_data(self, num_of_data, dimension, cluster_number):
+        x, y = make_blobs(n_samples=num_of_data, centers=cluster_number, n_features=dimension)
+        self._dimension = dimension
+        self.data = x
 
     def initialize_membership(self):
-        # for i in range(len(self.data)):
-        for i in range(4):
+        for i in range(len(self.data)):
             sum = 0
             self._u.append([])
+            self._u_previous.append([])
             for j in range(self._cluster_number):
-                self._u[i].append(random.uniform(1.0, 2.0))
+                self._u[i].append(random.uniform(0.0, 1.0))
                 sum += self._u[i][j]
+                self._u_previous[i].append(0)
             for j in range(self._cluster_number):
                 self._u[i][j] /= sum
 
-        # for k in range(4):
+        # for k in range(len(self.data)):
         #     print('\n')
         #     for l in range(self._cluster_number):
         #         print(self._u[k][l])
@@ -60,7 +65,7 @@ class FCM:
                 sum2 = 0
                 for k in range(len(self.data)):
                     powered = self._u[k][i] ** self._fuzziness
-                    sum1 += powered * self.data[k][i]
+                    sum1 += powered * self.data[k][j]
                     sum2 += powered
                 cluster_center_row.append(sum1 / sum2)
             self._cluster_centers.append(cluster_center_row)
@@ -96,7 +101,19 @@ class FCM:
 
 
 def main():
-    # my_fcm = FCM()
+    cluster_num = input("Enter number of cluster: ")
+    data_num = input("Enter number of data(data set size): ")
+    my_fcm = FCM()
+    # print(cluster_num)
+    # my_fcm.create_random_data(data_num, 2, cluster_num)
+    my_fcm.create_random_data(int(data_num), 2, int(cluster_num))
+    my_fcm.exec(int(cluster_num), 100, my_fcm.data)
+
+    print('data: ')
+    print(my_fcm.data)
+
+    print('centers: ')
+    print(my_fcm._cluster_centers)
     # my_fcm.initialize_membership()
     print('hello')
 
