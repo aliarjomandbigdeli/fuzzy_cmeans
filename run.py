@@ -12,7 +12,7 @@ class FCM:
     def __init__(self):
         self._u = []  # membership matrix
         self._u_previous = []
-        self._cluster_centers = []
+        self.cluster_centers = []
         self._fuzziness = 2
         self._error = 0.01
         self._cluster_number = 3
@@ -57,7 +57,7 @@ class FCM:
         print('initialize_membership')
 
     def calculate_cluster_centers(self):
-        self._cluster_centers.clear()
+        self.cluster_centers.clear()
         for i in range(self._cluster_number):
             cluster_center_row = []
             for j in range(self._dimension):
@@ -68,7 +68,7 @@ class FCM:
                     sum1 += powered * self.data[k][j]
                     sum2 += powered
                 cluster_center_row.append(sum1 / sum2)
-            self._cluster_centers.append(cluster_center_row)
+            self.cluster_centers.append(cluster_center_row)
 
         print('calculate_cluster_centers')
 
@@ -77,9 +77,9 @@ class FCM:
             for j in range(self._cluster_number):
                 self._u_previous[i][j] = self._u[i][j]
                 sum = 0
-                upper = self.distance(self.data[i], self._cluster_centers[j])
+                upper = self.distance(self.data[i], self.cluster_centers[j])
                 for k in range(self._cluster_number):
-                    lower = self.distance(self.data[i], self._cluster_centers[k])
+                    lower = self.distance(self.data[i], self.cluster_centers[k])
                     sum += (upper / lower) ** (2 / (self._fuzziness - 1))
                 self._u[i][j] = 1 / sum
 
@@ -111,9 +111,16 @@ def main():
 
     print('data: ')
     print(my_fcm.data)
+    for pt in my_fcm.data:
+        plt.plot(pt[0], pt[1], 'bo')
+    # plt.plot(my_fcm.data, 'bo')
+    for ct in my_fcm.cluster_centers:
+        plt.plot(ct[0], ct[1], 'ro')
+    plt.grid(b=None, which='both', axis='both', color='gray', linestyle='-', linewidth=2)
+    plt.show()
 
     print('centers: ')
-    print(my_fcm._cluster_centers)
+    print(my_fcm.cluster_centers)
     # my_fcm.initialize_membership()
     print('hello')
 
