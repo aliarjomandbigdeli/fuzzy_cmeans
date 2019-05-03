@@ -1,4 +1,5 @@
 from sklearn.datasets.samples_generator import make_blobs
+from numpy import linalg as la
 import random
 
 """
@@ -8,6 +9,11 @@ import random
 
 
 def distance(p1, p2):
+    """
+    this function calculate distance based on 2-norm of vectors definition
+    :parameter p1: is a list
+    :parameter p2: is a list
+    """
     s = 0
     for i in range(len(p1)):
         s += (p1[i] - p2[i]) ** 2
@@ -24,6 +30,8 @@ class FCM:
         _data: your dataset in the format of list of list for 2D input, for other dimension you can input similar
          format. You set it or use create_random_data method.
         _dimension: dimension of data or number of features of data
+        _fuzzifier (m): is the hyper- parameter that controls how fuzzy the cluster will be. The higher it is,
+         the fuzzier the cluster will be in the end.
     """
 
     def __init__(self):
@@ -31,7 +39,7 @@ class FCM:
         self._u_previous = []  # membership matrix in previous iteration
         self._data = []
         self._cluster_centers = []
-        self._fuzziness = 2
+        self._fuzzifier = 2
         self._error = 0.01
         self._cluster_number = 0
         self._dimension = 2  # number of features
@@ -42,7 +50,8 @@ class FCM:
 
     def data(self, d=None):
         """getter and setter of data"""
-        if d: self._data = d
+        if d:
+            self._data = d
         return self._data
 
     def cluster_centers(self):
@@ -91,7 +100,7 @@ class FCM:
                 sum1 = 0
                 sum2 = 0
                 for k in range(len(self._data)):
-                    powered = self._u[k][i] ** self._fuzziness
+                    powered = self._u[k][i] ** self._fuzzifier
                     sum1 += powered * self._data[k][j]
                     sum2 += powered
                 cluster_center_row.append(sum1 / sum2)
@@ -105,12 +114,8 @@ class FCM:
                 upper = distance(self._data[i], self._cluster_centers[j])
                 for k in range(self._cluster_number):
                     lower = distance(self._data[i], self._cluster_centers[k])
-                    s += (upper / lower) ** (2 / (self._fuzziness - 1))
+                    s += (upper / lower) ** (2 / (self._fuzzifier - 1))
                 self._u[i][j] = 1 / s
 
     def check_convergence(self):
-        s = 0
-        for i in range(len(self._data)):
-            for j in range(self._cluster_number):
-                s += (self._u[i][j] - self._u_previous[i][j]) ** 2
-        return s
+        return abs(la.norm(self._u, ord=2) - la.norm(self._u_previous, ord=2))

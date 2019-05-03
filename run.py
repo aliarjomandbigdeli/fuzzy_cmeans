@@ -15,9 +15,6 @@ def main():
     my_fcm.create_random_data(int(data_num), 2, int(cluster_num))
     my_fcm.exec(int(cluster_num), 100, my_fcm.data())
 
-    print('data: ')
-    print(my_fcm.data())
-
     for pt in my_fcm.data():
         plt.plot(pt[0], pt[1], 'bo')
     for ct in my_fcm.cluster_centers():
@@ -25,12 +22,6 @@ def main():
     plt.grid(b=None, which='both', axis='both', color='gray', linestyle='-', linewidth=2)
     plt.title('number of clusters: ' + cluster_num + ', number of data: ' + data_num)
     plt.show()
-
-    print('centers: ')
-    print(my_fcm.cluster_centers())
-
-    print('membership: ')
-    print(my_fcm._u)
 
 
 if __name__ == '__main__':
