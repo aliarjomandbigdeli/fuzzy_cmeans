@@ -15,8 +15,7 @@ def main():
     my_fcm.create_random_data(int(data_num), 2, int(cluster_num))
     my_fcm.exec(int(cluster_num), 100, my_fcm.data())
 
-    for pt in my_fcm.data():
-        plt.plot(pt[0], pt[1], 'bo')
+    plt.plot(my_fcm.data()[:, 0], my_fcm.data()[:, 1], 'bo')
     for ct in my_fcm.cluster_centers():
         plt.plot(ct[0], ct[1], 'r*')
     plt.grid(b=None, which='both', axis='both', color='gray', linestyle='-', linewidth=2)
